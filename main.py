@@ -1,5 +1,6 @@
 from pathlib import Path
 from datetime import datetime
+import csv
 
 
 class TweetLocation:
@@ -16,9 +17,15 @@ class Tweet:
         self.location = location
         self.datetime = dt
         self.text = text
+        self.sentiment = 0.0  # Изначально сентимент 0
+
+    def calculate_sentiment(self, sentiment_dict):
+        words = self.text.lower().split()  # Разбиваем на слова
+        sentiment_score = sum(sentiment_dict.get(word, 0) for word in words)
+        self.sentiment = sentiment_score
 
     def __repr__(self):
-        return f"Tweet({self.location}, {self.datetime}, '{self.text[:30]}...')"
+        return f"Tweet({self.location}, {self.datetime}, Sentiment={self.sentiment}, '{self.text[:30]}...')"
 
 
 def read_tweets(file_name):
@@ -48,6 +55,33 @@ def read_tweets(file_name):
     return tweets
 
 
+def load_sentiment_dict(file_name):
+    file_path = Path(__file__).parent / file_name
+    sentiment_dict = {}
+
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            reader = csv.reader(file)
+            next(reader)  # Пропускаем заголовок
+            for row in reader:
+                if len(row) != 2:
+                    continue
+                word, score = row[0].strip().lower(), float(row[1])
+                sentiment_dict[word] = score
+        print(f"Загружено {len(sentiment_dict)} слов с коэффициентами сентимента.")
+    except FileNotFoundError:
+        print(f"Файл {file_path} не найден.")
+    except Exception as e:
+        print(f"Ошибка при чтении файла: {e}")
+
+    return sentiment_dict
+
+
 if __name__ == "__main__":
     tweets = read_tweets("cali_tweets2014.txt")
-    print(tweets[:5])
+    sentiment_dict = load_sentiment_dict("sentiments.csv")
+
+    for tweet in tweets:
+        tweet.calculate_sentiment(sentiment_dict)
+
+    #print(tweets[:5])
