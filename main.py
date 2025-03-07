@@ -17,10 +17,11 @@ class Tweet:
         self.location = location
         self.datetime = dt
         self.text = text
-        self.sentiment = 0.0  # Изначально сентимент 0
+        self.sentiment = 0.0##
 
+    #добавить очищение текста от знаков препинания перед анализом
     def calculate_sentiment(self, sentiment_dict):
-        words = self.text.lower().split()  # Разбиваем на слова
+        words = self.text.lower().split()
         sentiment_score = sum(sentiment_dict.get(word, 0) for word in words)
         self.sentiment = sentiment_score
 
@@ -62,7 +63,7 @@ def load_sentiment_dict(file_name):
     try:
         with open(file_path, "r", encoding="utf-8") as file:
             reader = csv.reader(file)
-            next(reader)  # Пропускаем заголовок
+            next(reader)
             for row in reader:
                 if len(row) != 2:
                     continue
@@ -84,4 +85,4 @@ if __name__ == "__main__":
     for tweet in tweets:
         tweet.calculate_sentiment(sentiment_dict)
 
-    #print(tweets[:5])
+    print(tweets[:5])
