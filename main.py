@@ -13,21 +13,44 @@ class TweetLocation:
 
 
 class Tweet:
-    def __init__(self, location: TweetLocation, dt: datetime, text: str):
+    def __init__(self, location, dt, text):
         self.location = location
         self.datetime = dt
         self.text = text
-        self.sentiment = 0.0##
+        self.sentiment = None
 
-    #добавить очищение текста от знаков препинания перед анализом
     def calculate_sentiment(self, sentiment_dict):
-        words = self.text.lower().split()
-        sentiment_score = sum(sentiment_dict.get(word, 0) for word in words)
-        self.sentiment = sentiment_score
+        punctuations = [".", ",", "!", "?", ";", ":", "-", "—", "(", ")", "[", "]", "{", "}", "'", '"', "`", "“", "”", "…"]
+
+        text_without_punctuation = self.text
+        for p in punctuations:
+            text_without_punctuation = text_without_punctuation.replace(p, "")
+
+        words = text_without_punctuation.lower().split()
+        sentiment_score = 0.0
+        found_phrases = False
+
+        def get_phrase_length(phrase):
+            return len(phrase.split())
+
+        sorted_phrases = sorted(sentiment_dict.keys(), key=get_phrase_length, reverse=True)
+
+        for phrase in sorted_phrases:
+            phrase_words = phrase.split()
+            phrase_length = len(phrase_words)
+
+            for i in range(len(words) - phrase_length + 1):
+                if words[i:i + phrase_length] == phrase_words:
+                    sentiment_score += sentiment_dict[phrase]
+                    found_phrases = True
+
+                    words[i:i + phrase_length] = [None] * phrase_length
+
+        if found_phrases:
+            self.sentiment = sentiment_score
 
     def __repr__(self):
         return f"Tweet({self.location}, {self.datetime}, Sentiment={self.sentiment}, '{self.text[:30]}...')"
-
 
 def read_tweets(file_name):
     file_path = Path(__file__).parent / file_name
@@ -67,9 +90,9 @@ def load_sentiment_dict(file_name):
             for row in reader:
                 if len(row) != 2:
                     continue
-                word, score = row[0].strip().lower(), float(row[1])
-                sentiment_dict[word] = score
-        print(f"Загружено {len(sentiment_dict)} слов с коэффициентами сентимента.")
+                phrase, score = row[0].strip().lower(), float(row[1])
+                sentiment_dict[phrase] = score
+        print(f"Загружено {len(sentiment_dict)} фраз с коэффициентами сентимента.")
     except FileNotFoundError:
         print(f"Файл {file_path} не найден.")
     except Exception as e:
@@ -85,4 +108,5 @@ if __name__ == "__main__":
     for tweet in tweets:
         tweet.calculate_sentiment(sentiment_dict)
 
-    print(tweets[:5])
+    for tweet in tweets:
+        print(tweet)
