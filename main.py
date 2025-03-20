@@ -26,13 +26,14 @@ class Tweet:
         for p in punctuations:
             text_without_punctuation = text_without_punctuation.replace(p, "")
 
-        words = text_without_punctuation.lower().split()
-        sentiment_score = 0.0
-        found_phrases = False
+        words = text_without_punctuation.lower().split() #разбиваем текст на список слов и приводим к нижнему регистру
+        sentiment_score = 0.0 #переменная для хранения общего сентимента
+        found_phrases = False #флаг, указывающий найдены ли фразы
 
         def get_phrase_length(phrase):
             return len(phrase.split())
 
+        #сортировка словаря(ключей) в порядке убывания
         sorted_phrases = sorted(sentiment_dict.keys(), key=get_phrase_length, reverse=True)
 
         for phrase in sorted_phrases:
@@ -60,7 +61,7 @@ def read_tweets(file_name):
         with open(file_path, "r", encoding="utf-8") as file:
             for line in file:
                 parts = line.strip().split("\t")
-                if len(parts) < 4:
+                if len(parts) < 4: 
                     continue
 
                 coords = parts[0].strip("[]").split(", ")
