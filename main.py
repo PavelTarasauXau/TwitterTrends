@@ -38,12 +38,12 @@ class Tweet:
             phrase_words = phrase.split()
             phrase_length = len(phrase_words)
 
-            for i in range(len(words) - phrase_length + 1):
-                if words[i:i + phrase_length] == phrase_words:
+            for i in range(len(words) - phrase_length + 1): #Скользящее окно проходит по списку слов твита
+                if words[i:i + phrase_length] == phrase_words: #Окно захватывает подсписок слов длиной phrase_length:
                     sentiment_score += sentiment_dict[phrase]
                     found_phrases = True
 
-                    words[i:i + phrase_length] = [None] * phrase_length
+                    words[i:i + phrase_length] = [None] * phrase_length #Слова, соответствующие фразе, заменяются на None, чтобы избежать повторного использования:
 
         if found_phrases:
             self.sentiment = sentiment_score
