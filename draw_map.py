@@ -1,4 +1,5 @@
 
+
 import json
 import matplotlib.pyplot as plt
 
@@ -11,8 +12,11 @@ class State:
         """Рисует границы штата на переданной оси."""
         for region in self.regions:
             for polygon in region:
-                lons, lats = zip(*polygon)
-                ax.plot(lons, lats, label=self.name)
+                if isinstance(polygon[0], list):  # Проверяем, является ли первый элемент списком координат
+                    lons, lats = zip(*polygon)
+                    ax.plot(lons, lats, label=self.name)
+                else:
+                    print(f"Ошибка в данных штата {self.name}: {polygon}")
 
 class StatePlotter:
     def __init__(self, json_file):
