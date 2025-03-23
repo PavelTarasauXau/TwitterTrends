@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import datetime
 import csv
 import re
+from collections import defaultdict
 
 
 class TweetLocation:
@@ -22,34 +23,58 @@ class Tweet:
 
     def calculate_sentiment(self, sentiment_dict):
         text_without_punctuation = re.sub(r"[^\w\s'-]", "", self.text)
-
         words = text_without_punctuation.lower().split()
 
-        sentiment_score = 0.0  #Переменная для хранения общего сентимента
-        found_phrases = False  #Флаг, который указывает найдены ли фразы
+        sentiment_score = 0.0
+        word_count = len(words)
 
-        def get_phrase_length(phrase):
-            return len(phrase.split())
+        trie = sentiment_dict['trie']
+        scores = sentiment_dict['scores']
 
-        #Сортируем ключи словаря(в порядке убывания)
-        sorted_phrases = sorted(sentiment_dict.keys(), key=get_phrase_length, reverse=True)
+        i = 0
+        while i < word_count:
+            current_node = trie
+            matched_phrase = None
+            phrase_length = 0
 
-        for phrase in sorted_phrases:
-            phrase_words = phrase.split()
-            phrase_length = len(phrase_words)
+            for j in range(i, word_count):
+                word = words[j]
+                if word in current_node:
+                    current_node = current_node[word]
+                    if '_' in current_node:
+                        matched_phrase = current_node['_']
+                        phrase_length = j - i + 1
+                else:
+                    break
 
-            for i in range(len(words) - phrase_length + 1): #Скользящее окно проходит по списку слов твита
-                if words[i:i + phrase_length] == phrase_words: #Окно захватывает подсписок слов длиной phrase_length:
-                    sentiment_score += sentiment_dict[phrase]
-                    found_phrases = True
+            if matched_phrase:
+                sentiment_score += scores[matched_phrase]
+                i += phrase_length
+            else:
+                i += 1
 
-                    words[i:i + phrase_length] = [None] * phrase_length #Слова, соответствующие фразе, заменяются на None, чтобы избежать повторного использования:
-
-        if found_phrases:
-            self.sentiment = sentiment_score
+        self.sentiment = sentiment_score
 
     def __repr__(self):
         return f"Tweet({self.location}, {self.datetime}, Sentiment={self.sentiment}, '{self.text[:30]}...')"
+
+
+def build_trie(sentiment_dict):
+    trie = {}
+    scores = {}
+
+    for phrase, score in sentiment_dict.items():
+        words = phrase.split()
+        current_node = trie
+
+        for word in words:
+            if word not in current_node:
+                current_node[word] = {}
+            current_node = current_node[word]
+        current_node['_'] = phrase
+        scores[phrase] = score
+
+    return {'trie': trie, 'scores': scores}
 
 
 def read_tweets(file_name):
@@ -98,7 +123,7 @@ def load_sentiment_dict(file_name):
     except Exception as e:
         print(f"Ошибка при чтении файла: {e}")
 
-    return sentiment_dict
+    return build_trie(sentiment_dict)
 
 
 if __name__ == "__main__":
