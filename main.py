@@ -1,64 +1,11 @@
 from pathlib import Path
 from datetime import datetime
+from Tweet import Tweet
+from TweetLocation import TweetLocation
+from PrefixTree import PrefixTree, build_prefix_tree
 import csv
-import re
-from collections import defaultdict
 
-
-class TweetLocation:
-    def __init__(self, latitude: float, longitude: float):
-        self.latitude = latitude
-        self.longitude = longitude
-
-    def __repr__(self):
-        return f"TweetLocation(lat={self.latitude}, lon={self.longitude})"
-
-
-class Tweet:
-    def __init__(self, location, dt, text):
-        self.location = location
-        self.datetime = dt
-        self.text = text
-        self.sentiment = None
-
-    def calculate_sentiment(self, sentiment_dict):
-        text_without_punctuation = re.sub(r"[^\w\s'-]", "", self.text)
-        words = text_without_punctuation.lower().split()
-
-        sentiment_score = 0.0
-        word_count = len(words)
-
-        trie = sentiment_dict['trie']
-        scores = sentiment_dict['scores']
-
-        i = 0
-        while i < word_count:
-            current_node = trie
-            matched_phrase = None
-            phrase_length = 0
-
-            for j in range(i, word_count):
-                word = words[j]
-                if word in current_node:
-                    current_node = current_node[word]
-                    if '_' in current_node:
-                        matched_phrase = current_node['_']
-                        phrase_length = j - i + 1
-                else:
-                    break
-
-            if matched_phrase:
-                sentiment_score += scores[matched_phrase]
-                i += phrase_length
-            else:
-                i += 1
-
-        self.sentiment = sentiment_score
-
-    def __repr__(self):
-        return f"Tweet({self.location}, {self.datetime}, Sentiment={self.sentiment}, '{self.text[:30]}...')"
-
-
+#change the way the prefix tree works
 def build_trie(sentiment_dict):
     trie = {}
     scores = {}
@@ -123,7 +70,7 @@ def load_sentiment_dict(file_name):
     except Exception as e:
         print(f"Ошибка при чтении файла: {e}")
 
-    return build_trie(sentiment_dict)
+    return build_prefix_tree(sentiment_dict)
 
 
 if __name__ == "__main__":
