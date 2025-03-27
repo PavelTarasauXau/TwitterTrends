@@ -4,25 +4,7 @@ from Tweet import Tweet
 from TweetLocation import TweetLocation
 from PrefixTree import PrefixTree, build_prefix_tree
 import csv
-
-#change the way the prefix tree works
-def build_trie(sentiment_dict):
-    trie = {}
-    scores = {}
-
-    for phrase, score in sentiment_dict.items():
-        words = phrase.split()
-        current_node = trie
-
-        for word in words:
-            if word not in current_node:
-                current_node[word] = {}
-            current_node = current_node[word]
-        current_node['_'] = phrase
-        scores[phrase] = score
-
-    return {'trie': trie, 'scores': scores}
-
+import tkinter as tk
 
 def read_tweets(file_name):
     file_path = Path(__file__).parent / file_name
@@ -82,3 +64,7 @@ if __name__ == "__main__":
 
     for tweet in tweets:
         print(tweet)
+
+    #tkinter test
+    root = tk.Tk()
+    root.mainloop()
