@@ -1,11 +1,12 @@
 from tkinter import *
 from tkinter import ttk
 import json
-import math
+
+
 
 root = Tk()
 root.title("TWITTER-TRENDS  ")
-root.geometry("1250x600")
+root.geometry("1920x1080")
 root.update_idletasks() # чтобы размеры применились до того как захочу их получить в качестве свойств окна
 
 canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
@@ -31,15 +32,6 @@ root.iconphoto(False,root_icon)
 
 
 
-canvas.create_polygon(
-    10,10,
-    100,40,
-    200,100,
-    40,90,
-    10,10,
-    fill='white',
-    outline='black'
-)
 
 
 
@@ -66,18 +58,16 @@ def transform(lon, lat):
     return [x, y]
 
 # первый ращ делаем цикл чтобы распарсить данные и сформировать границы координат
-#  проходимся по ключам
+#  проходимся по ключам,
 for state in data: # ключи(названия штатов)
     for x in data[state]: # список полигонов
         for y in x: # контуры
             for polygon in y: # полигон
                 if isinstance(polygon,list):
-                        if polygon[0] < x_min: x_min = polygon[0]
-                        elif polygon[0] > x_max: x_max = polygon[0]
-                        if polygon[1] < y_min: y_min = polygon[1]
-                        elif polygon[1] > y_max: y_max = polygon[1]
-
-                   # print( transform(*polygon) )
+                    if polygon[0] < x_min: x_min = polygon[0]
+                    elif polygon[0] > x_max: x_max = polygon[0]
+                    if polygon[1] < y_min: y_min = polygon[1]
+                    elif polygon[1] > y_max: y_max = polygon[1]
                 else:
                     if y[0] < x_min:
                         x_min = y[0]
@@ -87,38 +77,41 @@ for state in data: # ключи(названия штатов)
                         y_min = y[1]
                     elif y[1] > y_max:
                         y_max = y[1]
-                   # print( transform(*y) )
 
 
 
-line_params = {
-    "count":1,
-    "dot_1":None,
-    "dot_2":None
+any_polygon = {
+    'dots':[]
 }
 count = 0
-def draw_line(dot):
-    line_params[f'dot_{line_params["count"]}'] = dot
-    line_params['count'] +=1
-    if line_params['count'] == 3:
-        canvas.create_line(*line_params["dot_1"],*line_params["dot_2"])
-        line_params["count"] = 1 # обнуляем счётчик
-        line_params["dot_1"] = line_params["dot_2"] # делаем вторую точку первой и по новой
+def draw_polygon(dot):
+    any_polygon['dots'].append(dot)
+    if dot in any_polygon['dots']:
+        # рисуем полигон
+        canvas.create_polygon(*any_polygon['dots'],fill='red',outline='black')
+        # очищаем промежуточный объект
+        any_polygon['dots'].clear()
+
 
 print(x_min)
 print(x_max)
 print(y_min)
 print(y_max)
+print('\n')
 
 # второй цикл нужен для того чтобы уже с готовыми границами получать правильные координаты и рисовать карту
 for state in data: # ключи(названия штатов)
-    print(f'{state} \n')
+    print(f'draw state - {state}')
     for x in data[state]: # список полигонов
         for y in x: # контуры
             for polygon in y: # полигон
                 if isinstance(polygon,list):
-                   draw_line( transform(*polygon) )
+                    got_coords = transform(*polygon)
+                    print(got_coords)
+                    draw_polygon( got_coords )
                 else:
-                    draw_line( transform(*y) )
+                    got_coords = transform(*y)
+                    print(got_coords)
+                    draw_polygon( got_coords )
 
 root.mainloop()
