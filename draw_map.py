@@ -48,14 +48,14 @@ with open("states.json") as file:
 
 # функция для перевода из земных координат (широты и долготы) в плоские координаты
 # и учёта границ canvas
-def transform(lon, lat, padding=50):
+def transform(lon, lat, padding=30):
     global min_lon,max_lon,min_lat,max_lat
     # Вычисляем коэффициенты масштабирования
     scale_x = (root.winfo_width() - 2 * padding) / (max_lon - min_lon)  # Масштаб по ширине
     scale_y = (root.winfo_height() - 2 * padding) / (max_lat - min_lat)  # Масштаб по высоте
 
     # Чтобы карта не была сжатой, можно выравнивать масштабы
-    scale = min(scale_x, scale_y) * 3.7
+    scale = min(scale_x, scale_y) * 2.7
 
     # Переводим координаты в плоскую систему
     x = (lon - min_lon) * scale + padding
