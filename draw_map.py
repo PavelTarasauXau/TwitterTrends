@@ -7,7 +7,7 @@ import threading
 
 root = Tk()
 root.title("TWITTER-TRENDS  ")
-root.geometry("1250x600")
+root.geometry("1520x780")
 root.update_idletasks() # чтобы размеры применились до того как захочу их получить в качестве свойств окна
 
 canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
@@ -60,7 +60,7 @@ def transform(lon, lat, padding=30):
     # Переводим координаты в плоскую систему
     x = (lon - min_lon) * scale + padding
     y = (max_lat - lat) * scale + padding  # Инверсия, так как y идёт вниз
-    return x, y
+    return [x, y]
 
 
 # начальные значения из файла
@@ -90,20 +90,51 @@ def draw_polygon():
     canvas.create_polygon(*any_polygon['dots'],fill=fill_color,outline='black',width=1)
     # очищаем промежуточный объект
     any_polygon['dots'].clear()
+def draw_text(x,y,txt):
+    # ровняем координаты
+    if txt == 'HI':
+        x -= 10
+        y += 10
+    elif txt == 'PR':
+        y += 15
+    elif txt == 'AK':
+        y -= 50
+    elif txt == 'WA':
+        x += 15
+    elif txt == 'ID':
+        y += 10
+    elif txt == 'MT':
+        y -= 10
+        x += 15
+    elif txt == 'AZ':
+        x += 15
+
+    canvas.create_text(x,y,text=txt,font='Arial 11 bold',anchor=CENTER)
 
 
 
 cur_state = None
 # второй цикл нужен для того чтобы уже с готовыми границами получать правильные координаты и рисовать карту
 for state in data: # ключи(названия штатов)
+    # переменные для вычесления средних x и y
+    sum_x = 0
+    sum_y = 0
+    count_coords = 0
+
     cur_state = state
     count = 0 # счётчик для полигонов каждого штата
     for polygon in data[state]: # полигон
         count += 1
         for point in polygon: # точка полигона
             got_coords = transform(*point)
+            sum_x += got_coords[0]
+            sum_y += got_coords[1]
+            count_coords += 1
             # print(got_coords)
             any_polygon['dots'].extend(got_coords)
         draw_polygon() # когда получили все координаты
+    draw_text(sum_x/count_coords,sum_y/count_coords,state) # после того как нарисовали штат рисуем подпись к нему
+
+
 
 root.mainloop()
