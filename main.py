@@ -55,6 +55,8 @@ def load_sentiment_dict(file_name):
     return build_prefix_tree(sentiment_dict)
 
 
+#add the opportunity to choose tweet theme
+#sentiment calculation doesn't work correctly(there are no none sentiment tweets)
 if __name__ == "__main__":
     tweets = read_tweets("cali_tweets2014.txt")
     sentiment_dict = load_sentiment_dict("sentiments.csv")
