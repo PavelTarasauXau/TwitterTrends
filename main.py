@@ -55,10 +55,43 @@ def load_sentiment_dict(file_name):
     return build_prefix_tree(sentiment_dict)
 
 
-#add the opportunity to choose tweet theme
-#sentiment calculation doesn't work correctly(there are no none sentiment tweets)
 if __name__ == "__main__":
-    tweets = read_tweets("cali_tweets2014.txt")
+    print("Выберите файл для анализа:")
+    print("1 - family_tweets2014.txt")
+    print("2 - football_tweets2014.txt")
+    print("3 - high_school_tweets2014.txt")
+    print("4 - movie_tweets2014.txt")
+    print("5 - shopping_tweets2014.txt")
+    print("6 - snow_tweets2014.txt")
+    print("7 - texas_tweets2014.txt")
+    print("8 - weekend_tweets2014.txt")
+    print("9 - cali_tweets2014.txt (по умолчанию)")
+
+    choice = input("Input number from 1 to 9 to choose tweet topic: ").strip()
+
+    match choice:
+        case "1":
+            file_name = "family_tweets2014.txt"
+        case "2":
+            file_name = "football_tweets2014.txt"
+        case "3":
+            file_name = "high_school_tweets2014.txt"
+        case "4":
+            file_name = "movie_tweets2014.txt"
+        case "5":
+            file_name = "shopping_tweets2014.txt"
+        case "6":
+            file_name = "snow_tweets2014.txt"
+        case "7":
+            file_name = "texas_tweets2014.txt"
+        case "8":
+            file_name = "weekend_tweets2014.txt"
+        case "9" | "":
+            file_name = "cali_tweets2014.txt"
+        case _:
+            file_name = choice
+
+    tweets = read_tweets(file_name)
     sentiment_dict = load_sentiment_dict("sentiments.csv")
 
     for tweet in tweets:
@@ -67,6 +100,6 @@ if __name__ == "__main__":
     for tweet in tweets:
         print(tweet)
 
-    #tkinter test
-    root = tk.Tk()
-    root.mainloop()
+
+
+
