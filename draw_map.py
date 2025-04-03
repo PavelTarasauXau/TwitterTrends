@@ -1,7 +1,14 @@
 from tkinter import *
-from tkinter import ttk
 import json
-import threading
+
+from coords_transform import transform
+from Country import *
+from Data_Parser import Parser
+from Map_Drawer import Drawer
+
+
+
+
 
 
 
@@ -10,8 +17,11 @@ root.title("TWITTER-TRENDS  ")
 root.geometry("1520x780")
 root.update_idletasks() # чтобы размеры применились до того как захочу их получить в качестве свойств окна
 
+
+
 canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
 canvas.pack(anchor=CENTER,expand=1)
+
 
 lbl = Label(text='MAP OF THE STATES')
 lbl.config(
@@ -40,101 +50,22 @@ root.iconphoto(False,root_icon)
 with open("states.json") as file:
     data = json.load(file)
 
+# создаём объект страны
+usa = Country('USA',data)
+# определяем границы карты для корректной работы функции transform
+usa.count_borders()
+# парсер которой создаёт экземеляры классов (State Polygon)
+parser = Parser(usa)
+parser.parse()
+# демонстрация созданных классов
+for shtat in usa.states:
+    shtat.display_info()
+    av_x,av_y = shtat.average_values()
+    print(f'среднее значение координат: x - {av_x} y - {av_y} ')
+usa.display_info()
 
-
-
-
-
-
-# функция для перевода из земных координат (широты и долготы) в плоские координаты
-# и учёта границ canvas
-def transform(lon, lat, padding=30):
-    global min_lon,max_lon,min_lat,max_lat
-    # Вычисляем коэффициенты масштабирования
-    scale_x = (root.winfo_width() - 2 * padding) / (max_lon - min_lon)  # Масштаб по ширине
-    scale_y = (root.winfo_height() - 2 * padding) / (max_lat - min_lat)  # Масштаб по высоте
-
-    # Чтобы карта не была сжатой, можно выравнивать масштабы
-    scale = min(scale_x, scale_y) * 2.7
-
-    # Переводим координаты в плоскую систему
-    x = (lon - min_lon) * scale + padding
-    y = (max_lat - lat) * scale + padding  # Инверсия, так как y идёт вниз
-    return [x, y]
-
-
-# начальные значения из файла
-min_lon = -117.033359
-max_lon = -117.033359
-min_lat = 49.000239
-max_lat = 49.000239
-
-# первый ращ делаем цикл чтобы распарсить данные и сформировать границы координат
-#  проходимся по ключам,
-for state in data: # ключи(названия штатов)
-    for polygon in data[state]: # полигон
-        for point in polygon: # точка полигона
-            if point[0] < min_lon: min_lon = point[0]
-            elif point[0] > max_lon: max_lon = point[0]
-            if point[1] < min_lat: min_lat = point[1]
-            elif point[1] > max_lat: max_lat = point[1]
-
-
-
-any_polygon = {
-    'dots':[]
-}
-def draw_polygon():
-    # рисуем полигон
-    fill_color = 'white'
-    canvas.create_polygon(*any_polygon['dots'],fill=fill_color,outline='black',width=1)
-    # очищаем промежуточный объект
-    any_polygon['dots'].clear()
-def draw_text(x,y,txt):
-    # ровняем координаты
-    if txt == 'HI':
-        x -= 10
-        y += 10
-    elif txt == 'PR':
-        y += 15
-    elif txt == 'AK':
-        y -= 50
-    elif txt == 'WA':
-        x += 15
-    elif txt == 'ID':
-        y += 10
-    elif txt == 'MT':
-        y -= 10
-        x += 15
-    elif txt == 'AZ':
-        x += 15
-
-    canvas.create_text(x,y,text=txt,font='Arial 11 bold',anchor=CENTER)
-
-
-
-cur_state = None
-# второй цикл нужен для того чтобы уже с готовыми границами получать правильные координаты и рисовать карту
-for state in data: # ключи(названия штатов)
-    # переменные для вычесления средних x и y
-    sum_x = 0
-    sum_y = 0
-    count_coords = 0
-
-    cur_state = state
-    count = 0 # счётчик для полигонов каждого штата
-    for polygon in data[state]: # полигон
-        count += 1
-        for point in polygon: # точка полигона
-            got_coords = transform(*point)
-            sum_x += got_coords[0]
-            sum_y += got_coords[1]
-            count_coords += 1
-            # print(got_coords)
-            any_polygon['dots'].extend(got_coords)
-        draw_polygon() # когда получили все координаты
-    draw_text(sum_x/count_coords,sum_y/count_coords,state) # после того как нарисовали штат рисуем подпись к нему
-
-
+# drawer - рисует карту
+drawer = Drawer(canvas,root.winfo_width(),root.winfo_height(),usa)
+drawer.draw()
 
 root.mainloop()
