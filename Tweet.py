@@ -1,5 +1,6 @@
 import re
 from PrefixTree import PrefixTree
+from TweetLocation import TweetLocation
 
 
 class Tweet:

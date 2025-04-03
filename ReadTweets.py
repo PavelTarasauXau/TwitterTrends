@@ -6,7 +6,6 @@ from Tweet import Tweet
 from TweetLocation import TweetLocation
 from PrefixTree import PrefixTree, build_prefix_tree
 import csv
-import tkinter as tk
 
 def read_tweets(file_name):
     file_path = Path(__file__).parent / file_name

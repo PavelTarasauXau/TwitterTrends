@@ -1,3 +1,5 @@
+#файл с классом узла дерева
+
 class Node:
     def __init__(self, data=None, is_end=False, sentiment_score=None):
         self.data = data

@@ -17,6 +17,7 @@ def main():
     sentiment_dict = load_sentiment_dict("sentiments.csv")
 
     for tweet in tweets:
+        tweet.calculate_sentiment(sentiment_dict)
         print(tweet)
 
     creating_map()

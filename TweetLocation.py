@@ -1,3 +1,4 @@
+#файл с координатами твита
 
 class TweetLocation:
     def __init__(self, latitude: float, longitude: float):
