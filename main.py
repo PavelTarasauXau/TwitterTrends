@@ -28,7 +28,6 @@ def main():
 
     for tweet in tweets:
         tweet.calculate_sentiment(sentiment_dict)
-        print(tweet)
 
     #######################################################
     root = Tk()
@@ -69,13 +68,16 @@ def main():
     # определяем границы карты для корректной работы функции transform
     usa.count_borders()
     # парсер которой создаёт экземеляры классов (State Polygon)
-    parser = Parser(usa)
+    parser = Parser(usa,tweets)
     parser.parse()
+
     # демонстрация созданных классов
     for shtat in usa.states:
-        shtat.display_info()
-        av_x,av_y = shtat.average_values()
-        print(f'среднее значение координат: x - {av_x} y - {av_y} ')
+        print(f'штат {shtat.name}')
+        print(shtat.sentiment)
+        # shtat.display_info()
+        # av_x,av_y = shtat.average_values()
+        # print(f'среднее значение координат: x - {av_x} y - {av_y} ')
     usa.display_info()
 
     # drawer - рисует карту
