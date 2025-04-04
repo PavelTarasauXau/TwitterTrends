@@ -19,6 +19,7 @@ from Map_Drawer import Drawer
 
 
 
+
 def main():
     file_name = get_tweet_file()
 
@@ -84,7 +85,6 @@ def main():
     root.mainloop()
 if __name__ == "__main__":
     main()
-
 
 
 
