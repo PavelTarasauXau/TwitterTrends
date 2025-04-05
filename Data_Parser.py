@@ -30,7 +30,10 @@ class Parser: # парсер котоорый парсит штаты и уже 
         for tweet in self.tweets:
             for state in self.country.states:
                 # если координаты твитта попадают в диапазон границы координат штата то добавляем в список твиттов штата
-                if round(tweet.location.longitude) in range(round(state.min_lon),round(state.max_lon)) and round(tweet.location.latitude) in range(round(state.min_lat),round(state.max_lat)):
+                if (tweet.location.longitude >= state.min_lon and
+                    tweet.location.longitude <= state.max_lon and
+                    tweet.location.latitude >= state.min_lat and
+                    tweet.location.latitude <= state.max_lat):
                     state.tweets.append(tweet)
 
         # когда сформировали штаты и привязали к ним соответствующие твитты

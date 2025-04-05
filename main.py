@@ -73,8 +73,9 @@ def main():
 
     # демонстрация созданных классов
     for shtat in usa.states:
-        print(f'штат {shtat.name}')
+        print(f'штааат {shtat.name}')
         print(shtat.sentiment)
+        print(f'кол-во твиттов - {len(shtat.tweets)}')
         # shtat.display_info()
         # av_x,av_y = shtat.average_values()
         # print(f'среднее значение координат: x - {av_x} y - {av_y} ')
