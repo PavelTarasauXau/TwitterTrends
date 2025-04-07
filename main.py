@@ -10,6 +10,7 @@ import csv
 import tkinter as tk
 #########################################
 from tkinter import *
+from tkinter import ttk
 import json
 
 from coords_transform import transform
@@ -35,7 +36,19 @@ def main():
     root.geometry("1520x780")
     root.update_idletasks() # чтобы размеры применились до того как захочу их получить в качестве свойств окна
 
+    #########
+    topics = ["Cali", "Family", "Football", "High School", "Movie", "Shopping", "Snow", "Texas", "Weekend"]
+    # по умолчанию будет выбран первый элемент из languages
+    topic_var = StringVar(value=topics[0])
 
+    label = ttk.Label(textvariable=topic_var)
+    label.pack(anchor=NW, padx=6, pady=6)
+
+    combobox = ttk.Combobox(textvariable=topic_var, values=topics)
+    combobox.pack(anchor=NW, padx=6, pady=6)
+
+    print(combobox.get())
+    ########
 
     canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
     canvas.pack(anchor=CENTER,expand=1)
