@@ -4,7 +4,7 @@ from pathlib import Path
 from datetime import datetime
 from Tweet import Tweet
 from TweetLocation import TweetLocation
-from PrefixTree import PrefixTree, build_prefix_tree
+#from PrefixTree import PrefixTree, build_prefix_tree
 import csv
 import tkinter as tk
 

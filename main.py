@@ -8,17 +8,14 @@ from ReadTweets import read_tweets
 from SentimentDict import load_sentiment_dict
 import csv
 import tkinter as tk
+from tkinter import ttk
 #########################################
 from tkinter import *
-from tkinter import ttk
 import json
-
 from coords_transform import transform
 from Country import *
 from Data_Parser import Parser
 from Map_Drawer import Drawer
-
-
 
 
 def main():
@@ -29,6 +26,9 @@ def main():
 
     for tweet in tweets:
         tweet.calculate_sentiment(sentiment_dict)
+
+    for tweet in tweets:
+        print(tweet)
 
     #######################################################
     root = Tk()
@@ -101,6 +101,3 @@ def main():
     root.mainloop()
 if __name__ == "__main__":
     main()
-
-
-

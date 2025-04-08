@@ -1,6 +1,5 @@
+import bisect
 import re
-from PrefixTree import PrefixTree
-
 
 class Tweet:
     def __init__(self, location, dt, text):
@@ -9,28 +8,41 @@ class Tweet:
         self.text = text
         self.sentiment = None
 
-    def calculate_sentiment(self, sentiment_tree):
+    def calculate_sentiment(self, sentiment_dict):
+        keys = list(sentiment_dict.keys())
+        sentiment_score = 0.0
+
         text_without_punctuation = re.sub(r"[^\w\s'-]", "", self.text)
         words = text_without_punctuation.lower().split()
 
-        sentiment_score = 0.0
         i = 0
-        has_sentiment_words = False  # Флаг, отслеживающий найденные сентимент-слова
-
         while i < len(words):
-            matched_phrase, score, phrase_length = sentiment_tree.search(words, i)
-            if matched_phrase:
-                sentiment_score += score
-                has_sentiment_words = True
-                i += phrase_length
+
+            remaining_words = len(words) - i
+
+            if remaining_words > 7:
+                phrase_run = 7
             else:
+                phrase_run = remaining_words
+
+            matched = False
+
+            while phrase_run > 0:
+                phrase = ' '.join(words[i:i + phrase_run])
+                idx = bisect.bisect_left(keys, phrase)
+
+                if idx < len(keys) and keys[idx] == phrase:
+                    sentiment_score += sentiment_dict[phrase]
+                    i += phrase_run
+                    matched = True
+                    break
+                else:
+                    phrase_run -= 1
+
+            if not matched:
                 i += 1
 
-        if has_sentiment_words:
-            self.sentiment = round(sentiment_score, 3)  # Округляем до 3 знаков
-        else:
-            self.sentiment = None  # Если слов не найдено, оставляем None
+        self.sentiment = sentiment_score if sentiment_score != 0.0 else None
 
     def __repr__(self):
         return f"Tweet({self.location}, {self.datetime}, Sentiment={self.sentiment}, '{self.text[:30]}...')"
-
