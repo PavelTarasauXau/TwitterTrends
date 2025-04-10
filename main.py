@@ -20,7 +20,7 @@ from Map_Drawer import Drawer
 
 def main():
 
-    def prepare_tweets(name_of_file="cali_tweets2014.txt"):
+    def prepare_tweets(name_of_file="tweet_topics/cali_tweets2014.txt"):
         file_name = name_of_file
 
         tweets = read_tweets(file_name)
@@ -51,42 +51,31 @@ def main():
         # получаем выделенный элемент
         selection = combobox.get()
         if selection == "Cali":
-            selection = 'cali_tweets2014.txt'
+            selection = 'tweet_topics/cali_tweets2014.txt'
         elif selection == 'Family':
-            selection = "family_tweets2014.txt"
+            selection = "tweet_topics/family_tweets2014.txt"
         elif selection == 'Football':
-            selection = "football_tweets2014.txt"
+            selection = "tweet_topics/football_tweets2014.txt"
         elif selection == 'High School':
-            selection = 'high_school_tweets2014.txt'
+            selection = 'tweet_topics/high_school_tweets2014.txt'
         elif selection == 'Movie':
-            selection = 'movie_tweets2014.txt'
+            selection = 'tweet_topics/movie_tweets2014.txt'
         elif selection == 'Shopping':
-            selection = 'shopping_tweets2014.txt'
+            selection = 'tweet_topics/shopping_tweets2014.txt'
         elif selection == 'Snow':
-            selection = 'snow_tweets2014.txt'
+            selection = 'tweet_topics/snow_tweets2014.txt'
         elif selection == 'Texas':
-            selection = 'texas_tweets2014.txt'
+            selection = 'tweet_topics/texas_tweets2014.txt'
         elif selection == 'Weekend':
-            selection = 'weekend_tweets2014.txt'
+            selection = 'tweet_topics/weekend_tweets2014.txt'
         print(selection)
-
         canvas.delete('tweet')
-
+        canvas.delete('tweet')
         state_of_map(prepare_tweets(selection),True)
 
     combobox = ttk.Combobox(textvariable=topic_var, values=topics)
     combobox.pack(anchor=NW, padx=3, pady=3)
     combobox.bind("<<ComboboxSelected>>", selected)
-
-
-    label = ttk.Label(textvariable=topic_var)
-    label.pack(anchor=NW, padx=6, pady=6)
-
-    combobox = ttk.Combobox(textvariable=topic_var, values=topics)
-    combobox.pack(anchor=NW, padx=6, pady=6)
-
-    print(combobox.get())
-    ########
 
     canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
     canvas.pack(anchor=CENTER,expand=1)
@@ -128,6 +117,7 @@ def main():
         # то тогда мы не рисуем всё заново а просто рисуем твитты
         if cond:
             pass
+            
         else:
             drawer.draw()
         # если мы вызываем из функции обновления значения списка то тогда обновляем значения полигонов
