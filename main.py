@@ -22,13 +22,18 @@ from Map_Drawer import Drawer
 
 
 def main():
-    file_name = get_tweet_file()
 
-    tweets = read_tweets(file_name)
-    sentiment_dict = load_sentiment_dict("sentiments.csv")
+    def prepare_tweets(name_of_file="cali_tweets2014.txt"):
+        file_name = name_of_file
 
-    for tweet in tweets:
-        tweet.calculate_sentiment(sentiment_dict)
+        tweets = read_tweets(file_name)
+        sentiment_dict = load_sentiment_dict("sentiments.csv")
+
+        for tweet in tweets:
+            tweet.calculate_sentiment(sentiment_dict)
+        return tweets
+
+    prepare_tweets()
 
     #######################################################
     root = Tk()
@@ -41,14 +46,40 @@ def main():
     # по умолчанию будет выбран первый элемент из languages
     topic_var = StringVar(value=topics[0])
 
-    label = ttk.Label(textvariable=topic_var)
-    label.pack(anchor=NW, padx=6, pady=6)
+
+
+    def selected(event):
+        # получаем выделенный элемент
+        selection = combobox.get()
+        if selection == "Cali":
+            selection = 'cali_tweets2014.txt'
+        elif selection == 'Family':
+            selection = "family_tweets2014.txt"
+        elif selection == 'Football':
+            selection = "football_tweets2014.txt"
+        elif selection == 'High School':
+            selection = 'high_school_tweets2014.txt'
+        elif selection == 'Movie':
+            selection = 'movie_tweets2014.txt'
+        elif selection == 'Shopping':
+            selection = 'shopping_tweets2014.txt'
+        elif selection == 'Snow':
+            selection = 'snow_tweets2014.txt'
+        elif selection == 'Texas':
+            selection = 'texas_tweets2014.txt'
+        elif selection == 'Weekend':
+            selection = 'weekend_tweets2014.txt'
+        print(selection)
+
+        canvas.delete('tweet')
+
+        state_of_map(prepare_tweets(selection),True)
 
     combobox = ttk.Combobox(textvariable=topic_var, values=topics)
-    combobox.pack(anchor=NW, padx=6, pady=6)
+    combobox.pack(anchor=NW, padx=3, pady=3)
+    combobox.bind("<<ComboboxSelected>>", selected)
 
-    print(combobox.get())
-    ########
+
 
     canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
     canvas.pack(anchor=CENTER,expand=1)
@@ -81,24 +112,27 @@ def main():
     # определяем границы карты для корректной работы функции transform
     usa.count_borders()
     # парсер которой создаёт экземеляры классов (State Polygon)
-    parser = Parser(usa,tweets)
-    parser.parse()
+    def state_of_map(tweets,cond=False):
 
-    # демонстрация созданных классов
-    for shtat in usa.states:
-        print(f'штааат {shtat.name}')
-        print(shtat.sentiment)
-        print(f'кол-во твиттов - {len(shtat.tweets)}')
-        # shtat.display_info()
-        # av_x,av_y = shtat.average_values()
-        # print(f'среднее значение координат: x - {av_x} y - {av_y} ')
-    usa.display_info()
+        parser = Parser(usa,tweets)
+        parser.parse()
 
-    # drawer - рисует карту
-    drawer = Drawer(canvas,root.winfo_width(),root.winfo_height(),usa)
-    drawer.draw()
+        drawer = Drawer(canvas,root.winfo_width(),root.winfo_height(),usa)
+        # если мы вызываем функцию обновления состояния карты в ответ на выбор в списке
+        # то тогда мы не рисуем всё заново а просто рисуем твитты
+        if cond:
+            pass
+        else:
+            drawer.draw()
+        # если мы вызываем из функции обновления значения списка то тогда обновляем значения полигонов
+        if cond:
+            drawer.update_polygons()
+
+    state_of_map(prepare_tweets())
 
     root.mainloop()
+
+
 if __name__ == "__main__":
     main()
 

@@ -29,7 +29,7 @@ class Drawer:
                 elif state.sentiment == 0:
                     fill_color = 'white'
 
-                self.canvas.create_polygon(*dots, fill=fill_color, outline='black', width=1)
+                state.polygons_id.append( self.canvas.create_polygon(*dots, fill=fill_color, outline='black', width=1,tags='state') )
                 # очищаем промежуточный объект
                 dots.clear()
 
@@ -63,7 +63,7 @@ class Drawer:
         elif txt == 'AZ':
             x += 15
 
-        self.canvas.create_text(x,y,text=txt,font='Arial 11 bold',fill='black',anchor='center')
+        self.canvas.create_text(x,y,text=txt,font='Arial 11 bold',fill='black',anchor='center',tags='state_label')
 
     def draw_tweets(self):
         for state in self.country.states:
@@ -77,4 +77,20 @@ class Drawer:
                                   self.width,
                                   self.height)
 
-                self.canvas.create_oval(t_x-3,t_y-3,t_x+3,t_y+3,fill='red')
+                self.canvas.create_oval(t_x-2,t_y-2,t_x+2,t_y+2,fill='red',tags='tweet')
+    def update_polygons(self):
+        for state in self.country.states:
+            fill_color = None
+            if state.sentiment == None:
+                fill_color = 'gray'
+            elif state.sentiment > 0:
+                fill_color = 'yellow'
+            elif state.sentiment < 0:
+                fill_color = 'blue'
+            elif state.sentiment == 0:
+                fill_color = 'white'
+            for id in state.polygons_id:
+                self.canvas.itemconfig(id,fill=fill_color)
+
+
+
