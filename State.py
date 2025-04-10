@@ -36,5 +36,3 @@ class State:
             print('его точки : ',end=' ')
             print(self.polygons[i].display_info())
 
-
-

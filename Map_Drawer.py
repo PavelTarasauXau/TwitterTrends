@@ -29,7 +29,10 @@ class Drawer:
                 elif state.sentiment == 0:
                     fill_color = 'white'
 
+
                 state.polygons_id.append( self.canvas.create_polygon(*dots, fill=fill_color, outline='black', width=1,tags='state') )
+                self.canvas.create_polygon(*dots, fill=fill_color, outline='black', width=1)
+
                 # очищаем промежуточный объект
                 dots.clear()
 
@@ -93,4 +96,16 @@ class Drawer:
                 self.canvas.itemconfig(id,fill=fill_color)
 
 
+    def draw_tweets(self):
+        for state in self.country.states:
+            for tweet in state.tweets:
+                t_x,t_y = transform(tweet.location.longitude,
+                                  tweet.location.latitude,
+                                  self.country.min_lon,
+                                  self.country.max_lon,
+                                  self.country.min_lat,
+                                  self.country.max_lat,
+                                  self.width,
+                                  self.height)
 
+                self.canvas.create_oval(t_x-3,t_y-3,t_x+3,t_y+3,fill='red')

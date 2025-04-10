@@ -1,6 +1,6 @@
 #файл для загрузки словаря сентиментов и преобразования его в дерево
 from pathlib import Path
-from PrefixTree import build_prefix_tree
+#from PrefixTree import build_prefix_tree
 import csv
 
 def load_sentiment_dict(file_name):
@@ -22,4 +22,5 @@ def load_sentiment_dict(file_name):
     except Exception as e:
         print(f"Ошибка при чтении файла: {e}")
 
-    return build_prefix_tree(sentiment_dict)
+    return sentiment_dict
+

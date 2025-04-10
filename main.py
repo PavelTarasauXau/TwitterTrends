@@ -2,23 +2,20 @@ from pathlib import Path
 from datetime import datetime
 from Tweet import Tweet
 from TweetLocation import TweetLocation
-from PrefixTree import PrefixTree, build_prefix_tree
 from FileChoose import get_tweet_file
 from ReadTweets import read_tweets
 from SentimentDict import load_sentiment_dict
 import csv
 import tkinter as tk
+from tkinter import ttk
 #########################################
 from tkinter import *
 from tkinter import ttk
 import json
-
 from coords_transform import transform
 from Country import *
 from Data_Parser import Parser
 from Map_Drawer import Drawer
-
-
 
 
 def main():
@@ -35,6 +32,7 @@ def main():
 
     prepare_tweets()
 
+
     #######################################################
     root = Tk()
     root.title("TWITTER-TRENDS  ")
@@ -45,6 +43,7 @@ def main():
     topics = ["Cali", "Family", "Football", "High School", "Movie", "Shopping", "Snow", "Texas", "Weekend"]
     # по умолчанию будет выбран первый элемент из languages
     topic_var = StringVar(value=topics[0])
+
 
 
 
@@ -80,6 +79,14 @@ def main():
     combobox.bind("<<ComboboxSelected>>", selected)
 
 
+    label = ttk.Label(textvariable=topic_var)
+    label.pack(anchor=NW, padx=6, pady=6)
+
+    combobox = ttk.Combobox(textvariable=topic_var, values=topics)
+    combobox.pack(anchor=NW, padx=6, pady=6)
+
+    print(combobox.get())
+    ########
 
     canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
     canvas.pack(anchor=CENTER,expand=1)
@@ -113,7 +120,6 @@ def main():
     usa.count_borders()
     # парсер которой создаёт экземеляры классов (State Polygon)
     def state_of_map(tweets,cond=False):
-
         parser = Parser(usa,tweets)
         parser.parse()
 
