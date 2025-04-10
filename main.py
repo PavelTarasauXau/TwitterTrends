@@ -2,7 +2,6 @@ from pathlib import Path
 from datetime import datetime
 from Tweet import Tweet
 from TweetLocation import TweetLocation
-from PrefixTree import PrefixTree, build_prefix_tree
 from FileChoose import get_tweet_file
 from ReadTweets import read_tweets
 from SentimentDict import load_sentiment_dict

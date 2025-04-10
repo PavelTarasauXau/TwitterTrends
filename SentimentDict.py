@@ -22,4 +22,4 @@ def load_sentiment_dict(file_name):
     except Exception as e:
         print(f"Ошибка при чтении файла: {e}")
 
-    return build_prefix_tree(sentiment_dict)
+    return sentiment_dict
