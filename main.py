@@ -71,7 +71,7 @@ def main():
         print(selection)
         canvas.delete('tweet')
         canvas.delete('tweet')
-        state_of_map(prepare_tweets(selection),True)
+        update_state_of_map(prepare_tweets(selection))
 
     combobox = ttk.Combobox(textvariable=topic_var, values=topics)
     combobox.pack(anchor=NW, padx=3, pady=3)
@@ -108,22 +108,17 @@ def main():
     # определяем границы карты для корректной работы функции transform
     usa.count_borders()
     # парсер которой создаёт экземеляры классов (State Polygon)
-    def state_of_map(tweets,cond=False):
-        parser = Parser(usa,tweets)
-        parser.parse()
+    def update_state_of_map(tweets):
 
-        drawer = Drawer(canvas,root.winfo_width(),root.winfo_height(),usa)
+        parser.update_states(tweets)
+        drawer.update_polygons()
         # если мы вызываем функцию обновления состояния карты в ответ на выбор в списке
         # то тогда мы не рисуем всё заново а просто рисуем твитты
-        if cond:
-            drawer.draw_tweets()
-        else:
-            drawer.draw()
-        # если мы вызываем из функции обновления значения списка то тогда обновляем значения полигонов
-        if cond:
-            drawer.update_polygons()
 
-    state_of_map(prepare_tweets())
+    parser = Parser(usa, prepare_tweets())
+    parser.parse()
+    drawer = Drawer(canvas, root.winfo_width(), root.winfo_height(), usa)
+    drawer.draw()
 
     root.mainloop()
 

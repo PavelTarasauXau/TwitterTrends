@@ -26,9 +26,6 @@ class Parser: # парсер котоорый парсит штаты и уже 
             self.country.states.append(any_state) # дополняем поле у country
 
         # после того как сформировали классы проходися по списку States у переданного класса Country
-        # проходимся по твита
-        for state in self.country.states:
-            state.tweets.clear() # когда мы будем обновлять твитты на карте нужно всё удалять
         for tweet in self.tweets:
             for state in self.country.states:
                 # если координаты твитта попадают в диапазон границы координат штата то добавляем в список твиттов штата
@@ -41,5 +38,23 @@ class Parser: # парсер котоорый парсит штаты и уже 
         # когда сформировали штаты и привязали к ним соответствующие твитты
         # считаем сентимент каждого штата
         for state in self.country.states:
-            state.semtiment = None
             state.calculate_sentiment()
+
+    def update_states(self,tweets):
+        self.tweets = tweets # обновляем твитты у парсера
+        for state in self.country.states:
+            state.tweets.clear() # очищаем у каждого штата принадлежащие ему твитты
+        for tweet in self.tweets:
+            for state in self.country.states:
+                # если координаты твитта попадают в диапазон границы координат штата то добавляем в список твиттов штата
+                if (tweet.location.longitude >= state.min_lon and
+                    tweet.location.longitude <= state.max_lon and
+                    tweet.location.latitude >= state.min_lat and
+                    tweet.location.latitude <= state.max_lat):
+                    state.tweets.append(tweet)
+        for state in self.country.states:
+            state.calculate_sentiment()
+
+
+
+

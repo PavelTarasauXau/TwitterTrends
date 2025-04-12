@@ -44,7 +44,6 @@ class Drawer:
                                   self.width,
                                   self.height)
             self.draw_text(av_x,av_y,state.name)
-        self.draw_tweets()
 
 
     def draw_text(self,x,y,txt):
@@ -70,6 +69,8 @@ class Drawer:
     def update_polygons(self):
         print('обновляем состояение полигонов')
         for state in self.country.states:
+            state.sentiment = None
+            state.calculate_sentiment()
             fill_color = None
             if state.sentiment == None:
                 fill_color = 'gray'
