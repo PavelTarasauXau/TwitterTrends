@@ -1,33 +1,37 @@
 from pathlib import Path
 from datetime import datetime
-from Tweet import Tweet
-from TweetLocation import TweetLocation
-from FileChoose import get_tweet_file
-from ReadTweets import read_tweets
-from SentimentDict import load_sentiment_dict
+from sentiment.Tweet import Tweet
+from sentiment.TweetLocation import TweetLocation
+from sentiment.ReadTweets import read_tweets
+from sentiment.SentimentDict import load_sentiment_dict
 import csv
 import tkinter as tk
+from tkinter import ttk
 #########################################
 from tkinter import *
 from tkinter import ttk
 import json
-
-from coords_transform import transform
-from Country import *
-from Data_Parser import Parser
-from Map_Drawer import Drawer
-
+from ui.coords_transform import transform
+from ui.Country import *
+from ui.States_Parser import Parser
+from ui.Map_Drawer import Drawer
 
 
 
 def main():
-    file_name = get_tweet_file()
 
-    tweets = read_tweets(file_name)
-    sentiment_dict = load_sentiment_dict("sentiments.csv")
+    def prepare_tweets(name_of_file="Data/tweet_topics/cali_tweets2014.txt"):
+        file_name = name_of_file
 
-    for tweet in tweets:
-        tweet.calculate_sentiment(sentiment_dict)
+        tweets = read_tweets(file_name)
+        sentiment_dict = load_sentiment_dict("Data/sentiments.csv")
+
+        for tweet in tweets:
+            tweet.calculate_sentiment(sentiment_dict)
+        return tweets
+
+    prepare_tweets()
+
 
     #######################################################
     root = Tk()
@@ -40,14 +44,38 @@ def main():
     # по умолчанию будет выбран первый элемент из languages
     topic_var = StringVar(value=topics[0])
 
-    label = ttk.Label(textvariable=topic_var)
-    label.pack(anchor=NW, padx=6, pady=6)
+
+
+
+    def selected(event):
+        # получаем выделенный элемент
+        selection = combobox.get()
+        if selection == "Cali":
+            selection = 'Data/tweet_topics/cali_tweets2014.txt'
+        elif selection == 'Family':
+            selection = "Data/tweet_topics/family_tweets2014.txt"
+        elif selection == 'Football':
+            selection = "Data/tweet_topics/football_tweets2014.txt"
+        elif selection == 'High School':
+            selection = 'Data/tweet_topics/high_school_tweets2014.txt'
+        elif selection == 'Movie':
+            selection = 'Data/tweet_topics/movie_tweets2014.txt'
+        elif selection == 'Shopping':
+            selection = 'Data/tweet_topics/shopping_tweets2014.txt'
+        elif selection == 'Snow':
+            selection = 'Data/tweet_topics/snow_tweets2014.txt'
+        elif selection == 'Texas':
+            selection = 'Data/tweet_topics/texas_tweets2014.txt'
+        elif selection == 'Weekend':
+            selection = 'Data/tweet_topics/weekend_tweets2014.txt'
+        print(selection)
+        canvas.delete('tweet')
+        canvas.delete('tweet')
+        update_state_of_map(prepare_tweets(selection))
 
     combobox = ttk.Combobox(textvariable=topic_var, values=topics)
-    combobox.pack(anchor=NW, padx=6, pady=6)
-
-    print(combobox.get())
-    ########
+    combobox.pack(anchor=NW, padx=3, pady=3)
+    combobox.bind("<<ComboboxSelected>>", selected)
 
     canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
     canvas.pack(anchor=CENTER,expand=1)
@@ -72,7 +100,7 @@ def main():
     root.iconphoto(False,root_icon)
 
 
-    with open("states.json") as file:
+    with open("data\\states.json") as file:
         data = json.load(file)
 
     # создаём объект страны
@@ -80,24 +108,21 @@ def main():
     # определяем границы карты для корректной работы функции transform
     usa.count_borders()
     # парсер которой создаёт экземеляры классов (State Polygon)
-    parser = Parser(usa,tweets)
+    def update_state_of_map(tweets):
+
+        parser.update_states(tweets)
+        drawer.update_polygons()
+        # если мы вызываем функцию обновления состояния карты в ответ на выбор в списке
+        # то тогда мы не рисуем всё заново а просто рисуем твитты
+
+    parser = Parser(usa, prepare_tweets())
     parser.parse()
-
-    # демонстрация созданных классов
-    for shtat in usa.states:
-        print(f'штааат {shtat.name}')
-        print(shtat.sentiment)
-        print(f'кол-во твиттов - {len(shtat.tweets)}')
-        # shtat.display_info()
-        # av_x,av_y = shtat.average_values()
-        # print(f'среднее значение координат: x - {av_x} y - {av_y} ')
-    usa.display_info()
-
-    # drawer - рисует карту
-    drawer = Drawer(canvas,root.winfo_width(),root.winfo_height(),usa)
+    drawer = Drawer(canvas, root.winfo_width(), root.winfo_height(), usa)
     drawer.draw()
 
     root.mainloop()
+
+
 if __name__ == "__main__":
     main()
 

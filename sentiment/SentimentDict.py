@@ -1,10 +1,10 @@
 #файл для загрузки словаря сентиментов и преобразования его в дерево
 from pathlib import Path
-from PrefixTree import build_prefix_tree
+#from PrefixTree import build_prefix_tree
 import csv
 
 def load_sentiment_dict(file_name):
-    file_path = Path(__file__).parent / file_name
+    file_path = file_name
     sentiment_dict = {}
 
     try:
@@ -18,8 +18,9 @@ def load_sentiment_dict(file_name):
                 sentiment_dict[phrase] = score
         print(f"Загружено {len(sentiment_dict)} фраз с коэффициентами сентимента.")
     except FileNotFoundError:
-        print(f"Файл {file_path} не найден.")
+        print(f"Файл {file_path} не найден. (файл с сентиментами)")
     except Exception as e:
         print(f"Ошибка при чтении файла: {e}")
 
     return sentiment_dict
+

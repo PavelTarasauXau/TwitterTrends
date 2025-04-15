@@ -2,14 +2,13 @@
 
 from pathlib import Path
 from datetime import datetime
-from Tweet import Tweet
-from TweetLocation import TweetLocation
-from PrefixTree import PrefixTree, build_prefix_tree
+from sentiment.Tweet import Tweet
+from sentiment.TweetLocation import TweetLocation
 import csv
 import tkinter as tk
 
 def read_tweets(file_name):
-    file_path = Path(__file__).parent / file_name
+    file_path = file_name
     tweets = []
 
     try:
@@ -28,7 +27,7 @@ def read_tweets(file_name):
 
         print(f"Прочитано {len(tweets)} твитов.")
     except FileNotFoundError:
-        print(f"Файл {file_path} не найден.")
+        print(f"Файл {file_path} не найден. (файл с твиттами)")
     except Exception as e:
         print(f"Ошибка при чтении файла: {e}")
 

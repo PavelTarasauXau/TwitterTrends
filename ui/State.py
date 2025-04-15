@@ -8,6 +8,7 @@ class State:
         self.max_lon = -117.033359
         self.min_lat = 49.000239
         self.max_lat = 49.000239
+        self.polygons_id = []
     def average_values(self):
         sum_x = 0
         sum_y = 0
@@ -34,6 +35,4 @@ class State:
             print(f'полигон {i+1}')
             print('его точки : ',end=' ')
             print(self.polygons[i].display_info())
-
-
 
