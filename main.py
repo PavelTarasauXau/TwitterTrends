@@ -1,10 +1,10 @@
 from pathlib import Path
 from datetime import datetime
-from Tweet import Tweet
-from TweetLocation import TweetLocation
+from sentiment.Tweet import Tweet
+from sentiment.TweetLocation import TweetLocation
 from FileChoose import get_tweet_file
-from ReadTweets import read_tweets
-from SentimentDict import load_sentiment_dict
+from sentiment.ReadTweets import read_tweets
+from sentiment.SentimentDict import load_sentiment_dict
 import csv
 import tkinter as tk
 from tkinter import ttk
@@ -12,19 +12,19 @@ from tkinter import ttk
 from tkinter import *
 from tkinter import ttk
 import json
-from coords_transform import transform
-from Country import *
-from Data_Parser import Parser
-from Map_Drawer import Drawer
+from ui.coords_transform import transform
+from ui.Country import *
+from ui.States_Parser import Parser
+from ui.Map_Drawer import Drawer
 
 
 def main():
 
-    def prepare_tweets(name_of_file="tweet_topics/cali_tweets2014.txt"):
+    def prepare_tweets(name_of_file="Data/tweet_topics/cali_tweets2014.txt"):
         file_name = name_of_file
 
         tweets = read_tweets(file_name)
-        sentiment_dict = load_sentiment_dict("sentiments.csv")
+        sentiment_dict = load_sentiment_dict("Data/sentiments.csv")
 
         for tweet in tweets:
             tweet.calculate_sentiment(sentiment_dict)
@@ -51,23 +51,23 @@ def main():
         # получаем выделенный элемент
         selection = combobox.get()
         if selection == "Cali":
-            selection = 'tweet_topics/cali_tweets2014.txt'
+            selection = 'Data/tweet_topics/cali_tweets2014.txt'
         elif selection == 'Family':
-            selection = "tweet_topics/family_tweets2014.txt"
+            selection = "Data/tweet_topics/family_tweets2014.txt"
         elif selection == 'Football':
-            selection = "tweet_topics/football_tweets2014.txt"
+            selection = "Data/tweet_topics/football_tweets2014.txt"
         elif selection == 'High School':
-            selection = 'tweet_topics/high_school_tweets2014.txt'
+            selection = 'Data/tweet_topics/high_school_tweets2014.txt'
         elif selection == 'Movie':
-            selection = 'tweet_topics/movie_tweets2014.txt'
+            selection = 'Data/tweet_topics/movie_tweets2014.txt'
         elif selection == 'Shopping':
-            selection = 'tweet_topics/shopping_tweets2014.txt'
+            selection = 'Data/tweet_topics/shopping_tweets2014.txt'
         elif selection == 'Snow':
-            selection = 'tweet_topics/snow_tweets2014.txt'
+            selection = 'Data/tweet_topics/snow_tweets2014.txt'
         elif selection == 'Texas':
-            selection = 'tweet_topics/texas_tweets2014.txt'
+            selection = 'Data/tweet_topics/texas_tweets2014.txt'
         elif selection == 'Weekend':
-            selection = 'tweet_topics/weekend_tweets2014.txt'
+            selection = 'Data/tweet_topics/weekend_tweets2014.txt'
         print(selection)
         canvas.delete('tweet')
         canvas.delete('tweet')
@@ -100,7 +100,7 @@ def main():
     root.iconphoto(False,root_icon)
 
 
-    with open("states.json") as file:
+    with open("data\\states.json") as file:
         data = json.load(file)
 
     # создаём объект страны

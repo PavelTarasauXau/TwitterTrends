@@ -1,4 +1,4 @@
-from coords_transform import transform
+from ui.coords_transform import transform
 
 class Drawer:
     def __init__(self,canvas,width,height,country):

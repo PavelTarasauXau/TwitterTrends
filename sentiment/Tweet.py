@@ -1,5 +1,5 @@
 import re
-from BinarySearch import binary_search
+from sentiment.BinarySearch import binary_search
 
 class Tweet:
     def __init__(self, location, dt, text):

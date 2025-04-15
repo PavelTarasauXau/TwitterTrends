@@ -1,5 +1,5 @@
-from State import State
-from Polygon import Polygon
+from ui.State import State
+from ui.Polygon import Polygon
 class Parser: # парсер котоорый парсит штаты и уже отпаршенные твиты соотносит со штатами
     def __init__(self,country,tweets):
         self.country = country # страна, которую парсер должен распарить
