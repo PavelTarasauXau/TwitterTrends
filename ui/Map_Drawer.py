@@ -21,11 +21,11 @@ class Drawer:
                                            self.height) )
                 fill_color = None
                 if state.sentiment == None:
-                    fill_color = 'gray'
+                    fill_color = '#a7a09f'
                 elif state.sentiment > 0:
-                    fill_color = 'yellow'
+                    fill_color = '#feff66'
                 elif state.sentiment < 0:
-                    fill_color = 'blue'
+                    fill_color = '#109eef'
                 elif state.sentiment == 0:
                     fill_color = 'white'
 
@@ -73,11 +73,11 @@ class Drawer:
             state.calculate_sentiment()
             fill_color = None
             if state.sentiment == None:
-                fill_color = 'gray'
+                fill_color = '#a7a09f'
             elif state.sentiment > 0:
-                fill_color = 'yellow'
+                fill_color = '#feff66'
             elif state.sentiment < 0:
-                fill_color = 'blue'
+                fill_color = '#109eef'
             elif state.sentiment == 0:
                 fill_color = 'white'
             for id in state.polygons_id:

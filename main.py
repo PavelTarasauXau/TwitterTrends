@@ -20,6 +20,8 @@ import sys
 import os
 import threading
 import asyncio
+#########################################
+from add_functionality.make_screen import save_screenshot
 
 # Добавляем корень проекта в sys.path, чтобы Python увидел папку bot
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -66,6 +68,7 @@ def main():
     def selected(event):
         # получаем выделенный элемент
         selection = combobox.get()
+        save_screenshot(root)
         if selection == "Cali":
             selection = 'Data/tweet_topics/cali_tweets2014.txt'
         elif selection == 'Family':
@@ -95,6 +98,9 @@ def main():
 
     canvas = Canvas(bg="white", width=root.winfo_width(), height=root.winfo_height())
     canvas.pack(anchor=CENTER,expand=1)
+
+
+
 
 
     lbl = Label(text='MAP OF THE STATES')
@@ -138,7 +144,6 @@ def main():
 
     parser = Parser(usa, prepare_tweets())
     parser.parse()
-
     data_bot['country'] = usa # передаём объект со штатами и твиттами актульный (бот его считывает)
     # он сможет также этот объект изменять
     bot_thread = threading.Thread(target=run_bot, daemon=True)
@@ -147,6 +152,7 @@ def main():
 
     drawer = Drawer(canvas, root.winfo_width(), root.winfo_height(), usa)
     drawer.draw()
+    save_screenshot(root)
 
     root.mainloop()
 
