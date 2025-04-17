@@ -15,10 +15,26 @@ from ui.coords_transform import transform
 from ui.Country import *
 from ui.States_Parser import Parser
 from ui.Map_Drawer import Drawer
+#########################################
+import sys
+import os
+import threading
+import asyncio
+
+# Добавляем корень проекта в sys.path, чтобы Python увидел папку bot
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
+from Bot.app import main_func  # Импортируем бота
+
+data_bot = {}
 
 
+def run_bot():
+    asyncio.run(main_func(data_bot))
 
 def main():
+
+
 
     def prepare_tweets(name_of_file="Data/tweet_topics/cali_tweets2014.txt"):
         file_name = name_of_file
@@ -105,8 +121,13 @@ def main():
 
     # создаём объект страны
     usa = Country('USA',data)
+
     # определяем границы карты для корректной работы функции transform
     usa.count_borders()
+
+
+
+
     # парсер которой создаёт экземеляры классов (State Polygon)
     def update_state_of_map(tweets):
 
@@ -117,6 +138,13 @@ def main():
 
     parser = Parser(usa, prepare_tweets())
     parser.parse()
+
+    data_bot['country'] = usa # передаём объект со штатами и твиттами актульный (бот его считывает)
+    # он сможет также этот объект изменять
+    bot_thread = threading.Thread(target=run_bot, daemon=True)
+    bot_thread.start()
+
+
     drawer = Drawer(canvas, root.winfo_width(), root.winfo_height(), usa)
     drawer.draw()
 
