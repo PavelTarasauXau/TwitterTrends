@@ -20,23 +20,22 @@ class Tweet:
         i = 0
         while i < words_len:
             remaining_words = words_len - i
-            phrase_run = min(7, remaining_words)  # Максимальная длина фразы - 7 слов
+            phrase_run = min(7, remaining_words)
 
             matched = False
             while phrase_run > 0 and not matched:
                 phrase = ' '.join(words[i:i + phrase_run])
-                # Используем нашу функцию бинарного поиска вместо bisect
                 idx = binary_search(keys, phrase)
 
-                if idx != -1:  # Фраза найдена
+                if idx != -1:
                     sentiment_score += sentiment_dict[phrase]
-                    i += phrase_run  # Перескакиваем на конец найденной фразы
+                    i += phrase_run
                     matched = True
                 else:
-                    phrase_run -= 1  # Пробуем более короткую фразу
+                    phrase_run -= 1
 
             if not matched:
-                i += 1  # Не нашли фразу, переходим к следующему слову
+                i += 1
 
         self.sentiment = sentiment_score if sentiment_score != 0.0 else None
     def __repr__(self):
