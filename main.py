@@ -22,6 +22,7 @@ import threading
 import asyncio
 #########################################
 from add_functionality.make_screen import save_screenshot
+from add_functionality.screen_canvas import save_canvas_as_png
 
 # Добавляем корень проекта в sys.path, чтобы Python увидел папку bot
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -65,17 +66,17 @@ def main():
 
 
 
-    def selected(event):
+    def selected(event=None):
         # получаем выделенный элемент
+        topic_var = combobox.get()
         selection = combobox.get()
-        save_screenshot(root)
         if selection == "Cali":
             selection = 'Data/tweet_topics/cali_tweets2014.txt'
         elif selection == 'Family':
             selection = "Data/tweet_topics/family_tweets2014.txt"
         elif selection == 'Football':
             selection = "Data/tweet_topics/football_tweets2014.txt"
-        elif selection == 'High School':
+        elif selection == 'High_school':
             selection = 'Data/tweet_topics/high_school_tweets2014.txt'
         elif selection == 'Movie':
             selection = 'Data/tweet_topics/movie_tweets2014.txt'
@@ -88,8 +89,7 @@ def main():
         elif selection == 'Weekend':
             selection = 'Data/tweet_topics/weekend_tweets2014.txt'
         print(selection)
-        canvas.delete('tweet')
-        canvas.delete('tweet')
+
         update_state_of_map(prepare_tweets(selection))
 
     combobox = ttk.Combobox(textvariable=topic_var, values=topics)
@@ -144,15 +144,21 @@ def main():
 
     parser = Parser(usa, prepare_tweets())
     parser.parse()
+    print([state.name for state in usa.states])
+    data_bot['parser'] = parser
     data_bot['country'] = usa # передаём объект со штатами и твиттами актульный (бот его считывает)
+    data_bot['comobox'] = combobox
+    data_bot['selected'] = selected
     # он сможет также этот объект изменять
     bot_thread = threading.Thread(target=run_bot, daemon=True)
     bot_thread.start()
 
 
-    drawer = Drawer(canvas, root.winfo_width(), root.winfo_height(), usa)
+    drawer = Drawer(canvas, root.winfo_width(), root.winfo_height(), usa,root)
+    data_bot['drawer'] = drawer
     drawer.draw()
-    save_screenshot(root)
+
+
 
     root.mainloop()
 

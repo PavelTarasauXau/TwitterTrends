@@ -1,11 +1,12 @@
 from ui.coords_transform import transform
-
+from add_functionality.make_screen import save_screenshot
 class Drawer:
-    def __init__(self,canvas,width,height,country):
+    def __init__(self,canvas,width,height,country,root):
         self.country = country
         self.width = width
         self.height = height
         self.canvas = canvas
+        self.root = root # для работы функции save_screenshot
     def draw(self):
         for state in self.country.states:
             for polygon in state.polygons:
@@ -46,6 +47,7 @@ class Drawer:
             self.draw_text(av_x,av_y,state.name)
 
 
+
     def draw_text(self,x,y,txt):
         if txt == 'HI':
             x -= 10
@@ -82,6 +84,8 @@ class Drawer:
                 fill_color = 'white'
             for id in state.polygons_id:
                 self.canvas.itemconfig(id,fill=fill_color)
+        save_screenshot(self.root)
+        print('можно делать скриншот')
 
 
     def draw_tweets(self):
@@ -97,3 +101,8 @@ class Drawer:
                                   self.height)
 
                 self.canvas.create_oval(t_x-3,t_y-3,t_x+3,t_y+3,fill='red',tags='tweet')
+        save_screenshot(self.root)
+
+    def delete_tweets(self):
+        self.canvas.delete('tweet')
+        save_screenshot(self.root)

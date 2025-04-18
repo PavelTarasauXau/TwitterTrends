@@ -1,7 +1,16 @@
 from PIL import ImageGrab
 import os
+import time
 def save_screenshot(window):
     print('сделали скриншот')
+
+    window.deiconify()    # если окно было свернуто
+    window.lift()         # поднять над другими окнами
+    window.focus_force()  # попытаться сфокусировать
+
+    window.update_idletasks()
+    window.update()
+    time.sleep(0.5)
     # Получаем координаты окна
     x = window.winfo_rootx()
     y = window.winfo_rooty()
